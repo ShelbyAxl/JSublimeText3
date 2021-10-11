@@ -18,7 +18,7 @@ public class FileList {
         ini = fin = null;
     }
     
-    public boolean newFile(Files datos){
+    public boolean newFile(File datos){
         Nodo n = new Nodo(datos);
         if(isEmpty()){
             ini = fin = n;
@@ -36,6 +36,10 @@ public class FileList {
     
     public boolean deleteFile(byte n){
         if(isEmpty())return false;
+        if(isOnlyOne()){
+            ini = fin = null;
+            return true;
+        }
         Nodo vt = ini;
         for(int i=0; i < n; i++)vt = vt.sig;
         vt.ant.sig = vt.sig;
@@ -47,28 +51,42 @@ public class FileList {
         return true;
     }
     
+    public File findFile(javax.swing.JScrollPane tab){
+        if(isEmpty())return null;
+        if(isOnlyOne())return ini.getDatos();
+        Nodo vt = ini;
+        while(vt.getDatos().getScroll() != tab){
+            vt = vt.sig;
+        }
+        return vt.getDatos();
+    }
+    
     public boolean isEmpty(){
         return ini == null;
+    }
+    
+    public boolean isOnlyOne(){
+        return ini == fin;
     }
 }
 
  class Nodo{
     
     //Properties
-    private Files datos;
+    private File datos;
     protected Nodo ant, sig;
      
     //Fuctions
-     public Nodo(Files datos){
+     public Nodo(File datos){
          ant = sig = null;
          this.datos = datos;
      }
 
-    public Files getDatos() {
+    public File getDatos() {
         return datos;
     }
 
-    public void setDatos(Files datos) {
+    public void setDatos(File datos) {
         this.datos = datos;
     }
 
