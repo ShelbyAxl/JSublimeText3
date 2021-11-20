@@ -1,11 +1,9 @@
 
+import static javax.swing.JOptionPane.*;
 import com.formdev.flatlaf.FlatDarkLaf;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import javax.swing.JFileChooser;
-import static javax.swing.JOptionPane.*;
-import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -29,8 +27,8 @@ public class Principal extends javax.swing.JFrame {
     public Principal() {
         initComponents();
         Dimension sz  = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setLocation((int)(sz.getHeight()/3), (int)(sz.getWidth()/12));
-        File sheet = newTab("Untitled", "", "", "", (byte)0, false);
+        setLocation((int)(sz.getHeight()/3), (int)(sz.getWidth()/12));
+        File sheet = newTab("Untitled", "", "", "", false);
     }
 
     /**
@@ -42,7 +40,7 @@ public class Principal extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPopupMenu1 = new javax.swing.JPopupMenu();
+        pupMenuHTML = new javax.swing.JPopupMenu();
         mitCopy = new javax.swing.JMenuItem();
         mitCut = new javax.swing.JMenuItem();
         mitPaste = new javax.swing.JMenuItem();
@@ -56,32 +54,33 @@ public class Principal extends javax.swing.JFrame {
         btnFolder = new javax.swing.JMenuItem();
         btnSave = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        btnSaveAs = new javax.swing.JMenuItem();
         btnExit = new javax.swing.JMenuItem();
         mnEdit = new javax.swing.JMenu();
 
         mitCopy.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         mitCopy.setText("Copy");
-        mitCopy.setComponentPopupMenu(jPopupMenu1);
-        jPopupMenu1.add(mitCopy);
+        mitCopy.setComponentPopupMenu(pupMenuHTML);
+        pupMenuHTML.add(mitCopy);
 
         mitCut.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         mitCut.setText("Cut");
-        mitCut.setComponentPopupMenu(jPopupMenu1);
-        jPopupMenu1.add(mitCut);
+        mitCut.setComponentPopupMenu(pupMenuHTML);
+        pupMenuHTML.add(mitCut);
 
         mitPaste.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         mitPaste.setText("Paste");
-        mitPaste.setComponentPopupMenu(jPopupMenu1);
-        jPopupMenu1.add(mitPaste);
+        mitPaste.setComponentPopupMenu(pupMenuHTML);
+        pupMenuHTML.add(mitPaste);
 
         mitBrowser.setText("Open in browser");
-        mitBrowser.setComponentPopupMenu(jPopupMenu1);
-        jPopupMenu1.add(mitBrowser);
+        mitBrowser.setComponentPopupMenu(pupMenuHTML);
+        pupMenuHTML.add(mitBrowser);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Sublime Text 3");
-        setMinimumSize(new java.awt.Dimension(771, 445));
+        setMinimumSize(new java.awt.Dimension(373, 306));
+        setPreferredSize(new java.awt.Dimension(661, 416));
 
         txtRefresh.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         txtRefresh.setMaximumSize(new java.awt.Dimension(58, 24));
@@ -126,9 +125,14 @@ public class Principal extends javax.swing.JFrame {
         mnFile.add(btnSave);
         mnFile.add(jSeparator1);
 
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        jMenuItem1.setText("Save as...");
-        mnFile.add(jMenuItem1);
+        btnSaveAs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        btnSaveAs.setText("Save as...");
+        btnSaveAs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveAsActionPerformed(evt);
+            }
+        });
+        mnFile.add(btnSaveAs);
 
         btnExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_DOWN_MASK));
         btnExit.setText("Exit");
@@ -150,7 +154,7 @@ public class Principal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
-        newFile("Untitled", "", "", "", false);
+        newTab("Untitled", "", "", "", false);
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
@@ -165,28 +169,42 @@ public class Principal extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_btnExitActionPerformed
 
+    private void btnSaveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveAsActionPerformed
+        File a = list.findFile((javax.swing.JScrollPane)tbdPestañas.getSelectedComponent());
+        a.setText(texto);
+        saveAs(a);
+    }//GEN-LAST:event_btnSaveAsActionPerformed
+
     public void linesColumns(int a, javax.swing.JTextArea b){
         int rows = 1, columns = 1;
-        for(int i = a; i> 0; i--){
-            if(rows == 1)columns++;
+        for(int i = a; i > 0; i--){
             if(b.getText().substring(i-1,i).equals("\n"))rows++;
+            if(rows == 1)columns++;
         }
         txtRefresh.setText("Line " + rows + ", Column " + columns);
     }
     
-    public void onlyOne(javax.swing.JScrollPane a){
+    public void title(javax.swing.JScrollPane a){
         if(!list.findFile(a).getName().equals("Untitled"))
-            this.setTitle(list.findFile(a).getDirectory());
-        else this.setTitle("Untitiled");
+            setTitle(list.findFile(a).getDirectory());
+        else setTitle("Untitled");
     }
     
-    public File newTab(String name, String directory, String text, String type, byte number, boolean exist){
+    public File newTab(String name, String directory, String text, String type, boolean exist){
+        
+        //Creación del textArea y el scrollPane
         javax.swing.JTextArea Text = new javax.swing.JTextArea();
         javax.swing.JScrollPane Scroll = new javax.swing.JScrollPane();
         
-        File archivo = new File(name, directory, text, "", (byte)(tbdPestañas.getTabCount()-1), Text, Scroll, exist);
+        //Creación del objecto File, donde 2 de los parámetros son el textArea y el scrollPane;
+        //Añadimos el objeto a la lista de objetos de tipo File
+        File archivo = new File(name, directory, text, "", (byte)(tbdPestañas.getTabCount()), Text, Scroll, exist);
         list.newFile(archivo);
         
+        //Editamos el Componente de clic derecho del textAreay le ponemos el
+        Text.setComponentPopupMenu(pupMenuHTML);
+        
+        //Diseño de los 2 compoenentes con datos del objeto tipo File
         Text.setColumns(20);
         Text.setBackground(new java.awt.Color(51, 51, 51));
         Text.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
@@ -198,7 +216,12 @@ public class Principal extends javax.swing.JFrame {
         Text.setCaretPosition(0);
         Scroll.setViewportView(Text);
         tbdPestañas.addTab(name, Scroll);
+        tbdPestañas.setSelectedIndex(tbdPestañas.getTabCount()-1);
+        Text.requestFocus();
+        linesColumns(Text.getSelectionStart(), Text);
+        title(Scroll);
         
+        //Agregacion de Eventos tras los cambios que puede sufrir la pestaña
         Text.addCaretListener((javax.swing.event.CaretEvent evt) -> {
             linesColumns(Text.getSelectionStart(), Text);
             texto = Text.getText();
@@ -206,15 +229,9 @@ public class Principal extends javax.swing.JFrame {
         Text.addHierarchyListener((java.awt.event.HierarchyEvent evt) -> {
             linesColumns(Text.getSelectionStart(), Text);
             texto = Text.getText();
-            onlyOne(Scroll);
+            title(Scroll);
         });
-        
         return archivo;
-    }
-    
-    public void newFile(String name, String text, String directory, String type, boolean exist){
-        File archivo = newTab(name, directory, text, type, (byte)0, exist);
-        tbdPestañas.setSelectedIndex(tbdPestañas.getTabCount()-1);
     }
     
     public void openFile(){
@@ -222,9 +239,10 @@ public class Principal extends javax.swing.JFrame {
         FileNameExtensionFilter filter = new FileNameExtensionFilter("TEXT FILES", "html", "text");
         v.setFileFilter(filter);
         v.showOpenDialog(this);
+        if(!v.isShowing()){}
         Editor edit = new Editor();
         String text = edit.read(v.getSelectedFile().toString());
-        newFile(v.getName(v.getSelectedFile()), text, v.getSelectedFile().toString(), v.getTypeDescription(v.getSelectedFile()), true);
+        newTab(v.getName(v.getSelectedFile()), v.getSelectedFile().toString(), text, v.getTypeDescription(v.getSelectedFile()), true);
     }
     
     public void saveFile(){
@@ -232,7 +250,8 @@ public class Principal extends javax.swing.JFrame {
         a.setText(texto);
         if(a.getDirectory().equals(""))saveAs(a);
         else{
-            
+            Editor b = new Editor();
+            b.write(texto, a.getDirectory());
         }
     }
     
@@ -240,6 +259,11 @@ public class Principal extends javax.swing.JFrame {
         JFileChooser v = new JFileChooser();
         v.setSelectedFile(new java.io.File(a.getName()));
         v.showSaveDialog(this);
+        Editor b = new Editor();
+        b.write(a.getText(), v.getSelectedFile().toString());
+        a.setName(v.getName(v.getSelectedFile()));
+        tbdPestañas.setTitleAt(tbdPestañas.getSelectedIndex(), a.getName());
+        if(!v.isShowing()){}
     }
     
     /**
@@ -266,8 +290,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JMenuItem btnNew;
     private javax.swing.JMenuItem btnOpen;
     private javax.swing.JMenuItem btnSave;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JPopupMenu jPopupMenu1;
+    private javax.swing.JMenuItem btnSaveAs;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JMenuBar mbTools;
     private javax.swing.JMenuItem mitBrowser;
@@ -276,6 +299,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JMenuItem mitPaste;
     private javax.swing.JMenu mnEdit;
     private javax.swing.JMenu mnFile;
+    private javax.swing.JPopupMenu pupMenuHTML;
     private javax.swing.JTabbedPane tbdPestañas;
     private javax.swing.JLabel txtRefresh;
     // End of variables declaration//GEN-END:variables

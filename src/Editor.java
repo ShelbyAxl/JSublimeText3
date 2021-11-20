@@ -10,8 +10,8 @@ import java.io.*;
  */
 public class Editor {
     
-    public String read(String address){
-        try (FileReader read = new FileReader(address)) {
+    public String read(String directory){
+        try (FileReader read = new FileReader(directory)) {
             BufferedReader buff = new BufferedReader(read);
             String cad = "",cad2 = "";
             do cad += (cad2 = buff.readLine()) != null ? cad2  + "\n" : ""; while(cad2 != null);
@@ -24,13 +24,25 @@ public class Editor {
     }
     
     public void write(String text, String address){
-        try(FileWriter write = new FileWriter(address)){
+        if(new java.io.File(address).exists()){
+            try(FileWriter write = new FileWriter(address, true)){
+                BufferedWriter buff = new BufferedWriter(write);
+                for(int i=0; i < text.length(); i++)buff.write(text.charAt(i) == 13 ? "" : text.charAt(i) + "");
+                buff.flush();
+            }catch(IOException ex){
+                 javax.swing.JOptionPane.showMessageDialog(null,"¡Error al tratar de guardar el archivo!");
+            }
+        }
+        
+        else {
+            try(FileWriter write = new FileWriter(address)){
             BufferedWriter buff = new BufferedWriter(write);
-            String cad = "", cad2;
             for(int i=0; i < text.length(); i++)buff.write(text.charAt(i) == 13 ? "" : text.charAt(i) + "");
             buff.flush();
-        }catch(IOException ex){
-             javax.swing.JOptionPane.showMessageDialog(null,"¡Error al tratar de guardar el archivo!");
+            }catch(IOException ex){
+                 javax.swing.JOptionPane.showMessageDialog(null,"¡Error al tratar de guardar el archivo!");
+            }
         }
+        
     }
 }
