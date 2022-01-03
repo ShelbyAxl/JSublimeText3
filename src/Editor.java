@@ -25,7 +25,7 @@ public class Editor {
     
     public void write(String text, String address){
         if(new java.io.File(address).exists()){
-            try(FileWriter write = new FileWriter(address, true)){
+            try(FileWriter write = new FileWriter(address)){
                 BufferedWriter buff = new BufferedWriter(write);
                 for(int i=0; i < text.length(); i++)buff.write(text.charAt(i) == 13 ? "" : text.charAt(i) + "");
                 buff.flush();

@@ -81,6 +81,7 @@ public class Principal extends javax.swing.JFrame {
         setTitle("Sublime Text 3");
         setMinimumSize(new java.awt.Dimension(373, 306));
         setPreferredSize(new java.awt.Dimension(661, 416));
+        getContentPane().setLayout(new java.awt.BorderLayout());
 
         txtRefresh.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         txtRefresh.setMaximumSize(new java.awt.Dimension(58, 24));
@@ -236,7 +237,7 @@ public class Principal extends javax.swing.JFrame {
     
     public void openFile(){
         JFileChooser v = new JFileChooser();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("TEXT FILES", "html", "text");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Files", "html", "txt", "py", "java", "cpp");
         v.setFileFilter(filter);
         v.showOpenDialog(this);
         if(!v.isShowing()){}
