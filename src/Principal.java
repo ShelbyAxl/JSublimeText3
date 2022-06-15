@@ -20,7 +20,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class Principal extends javax.swing.JFrame {
     FileList list = new FileList();
-    String texto = "";
+    String texto = "", seleccion = "";
+    NumeroLinea row;
     /**
      * Creates new form Principal
      */
@@ -79,8 +80,7 @@ public class Principal extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Sublime Text 3");
-        setMinimumSize(new java.awt.Dimension(373, 306));
-        setPreferredSize(new java.awt.Dimension(661, 416));
+        setMinimumSize(new java.awt.Dimension(800, 500));
 
         txtRefresh.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         txtRefresh.setMaximumSize(new java.awt.Dimension(58, 24));
@@ -181,7 +181,8 @@ public class Principal extends javax.swing.JFrame {
             if(b.getText().substring(i-1,i).equals("\n"))rows++;
             if(rows == 1)columns++;
         }
-        txtRefresh.setText("Line " + rows + ", Column " + columns);
+        String cad = this.seleccion != null ? "Line " + rows + ", Column " + columns + ", " + seleccion.length() + " selected" : "Line " + rows + ", Column " + columns;
+        txtRefresh.setText(cad);
     }
     
     public void title(javax.swing.JScrollPane a){
@@ -205,7 +206,7 @@ public class Principal extends javax.swing.JFrame {
         //Editamos el Componente de clic derecho del textAreay le ponemos el
         Text.setComponentPopupMenu(pupMenuHTML);
         
-        //Diseño de los 2 compoenentes con datos del objeto tipo File
+        //Diseño de los 2 componentes con datos del objeto tipo File
         Text.setColumns(20);
         Text.setBackground(new java.awt.Color(51, 51, 51));
         Text.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
@@ -221,16 +222,23 @@ public class Principal extends javax.swing.JFrame {
         Text.requestFocus();
         linesColumns(Text.getSelectionStart(), Text);
         title(Scroll);
+        row = new NumeroLinea(Text);
+        texto = Text.getText();
+        title(Scroll);
+        Scroll.setRowHeaderView(row);
         
         //Agregacion de Eventos tras los cambios que puede sufrir la pestaña
         Text.addCaretListener((javax.swing.event.CaretEvent evt) -> {
+            seleccion = Text.getSelectedText();
             linesColumns(Text.getSelectionStart(), Text);
             texto = Text.getText();
         });
         Text.addHierarchyListener((java.awt.event.HierarchyEvent evt) -> {
+            seleccion = Text.getSelectedText();
             linesColumns(Text.getSelectionStart(), Text);
             texto = Text.getText();
             title(Scroll);
+            Scroll.setRowHeaderView(row);
         });
         return archivo;
     }
