@@ -1,5 +1,4 @@
 
-import static javax.swing.JOptionPane.*;
 import com.formdev.flatlaf.FlatDarkLaf;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -21,7 +20,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class Principal extends javax.swing.JFrame {
     FileList list = new FileList();
     String texto = "", seleccion = "";
-    NumeroLinea row;
+    Pila Undo, Redo;
     /**
      * Creates new form Principal
      */
@@ -59,17 +58,17 @@ public class Principal extends javax.swing.JFrame {
         btnExit = new javax.swing.JMenuItem();
         mnEdit = new javax.swing.JMenu();
 
-        mitCopy.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        mitCopy.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
         mitCopy.setText("Copy");
         mitCopy.setComponentPopupMenu(pupMenuHTML);
         pupMenuHTML.add(mitCopy);
 
-        mitCut.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        mitCut.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
         mitCut.setText("Cut");
         mitCut.setComponentPopupMenu(pupMenuHTML);
         pupMenuHTML.add(mitCut);
 
-        mitPaste.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        mitPaste.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
         mitPaste.setText("Paste");
         mitPaste.setComponentPopupMenu(pupMenuHTML);
         pupMenuHTML.add(mitPaste);
@@ -94,7 +93,7 @@ public class Principal extends javax.swing.JFrame {
 
         mnFile.setText("File");
 
-        btnNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        btnNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         btnNew.setText("New File");
         btnNew.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -103,7 +102,7 @@ public class Principal extends javax.swing.JFrame {
         });
         mnFile.add(btnNew);
 
-        btnOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        btnOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         btnOpen.setText("Open File...");
         btnOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -115,7 +114,7 @@ public class Principal extends javax.swing.JFrame {
         btnFolder.setText("Open Folder...");
         mnFile.add(btnFolder);
 
-        btnSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        btnSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         btnSave.setText("Save");
         btnSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -125,7 +124,7 @@ public class Principal extends javax.swing.JFrame {
         mnFile.add(btnSave);
         mnFile.add(jSeparator1);
 
-        btnSaveAs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        btnSaveAs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         btnSaveAs.setText("Save as...");
         btnSaveAs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -134,7 +133,7 @@ public class Principal extends javax.swing.JFrame {
         });
         mnFile.add(btnSaveAs);
 
-        btnExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        btnExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
         btnExit.setText("Exit");
         btnExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -181,7 +180,8 @@ public class Principal extends javax.swing.JFrame {
             if(b.getText().substring(i-1,i).equals("\n"))rows++;
             if(rows == 1)columns++;
         }
-        String cad = this.seleccion != null ? "Line " + rows + ", Column " + columns + ", " + seleccion.length() + " selected" : "Line " + rows + ", Column " + columns;
+        String cad = (seleccion == null) ? "Line " + rows + ", Column " + columns : 
+                "Line " + rows + ", Column " + columns + ", " + seleccion.length() + " selected.";
         txtRefresh.setText(cad);
     }
     
@@ -193,13 +193,14 @@ public class Principal extends javax.swing.JFrame {
     
     public File newTab(String name, String directory, String text, String type, boolean exist){
         
-        //Creación del textArea y el scrollPane
+        //Creación del textArea y el scrollPane y la numeración de lineas de texto
         javax.swing.JTextArea Text = new javax.swing.JTextArea();
         javax.swing.JScrollPane Scroll = new javax.swing.JScrollPane();
+        NumeroLinea row = new NumeroLinea(Text);
         
         //Creación del objecto File, donde 2 de los parámetros son el textArea y el scrollPane;
         //Añadimos el objeto a la lista de objetos de tipo File
-        File archivo = new File(name, directory, text, "", (byte)(tbdPestañas.getTabCount()), Text, Scroll, exist);
+        File archivo = new File(name, directory, text, "", (byte)(tbdPestañas.getTabCount()), Text, Scroll, exist, Undo, Redo);
         
         list.newFile(archivo);
         
@@ -222,16 +223,15 @@ public class Principal extends javax.swing.JFrame {
         Text.requestFocus();
         linesColumns(Text.getSelectionStart(), Text);
         title(Scroll);
-        row = new NumeroLinea(Text);
         texto = Text.getText();
         title(Scroll);
         Scroll.setRowHeaderView(row);
         
         //Agregacion de Eventos tras los cambios que puede sufrir la pestaña
         Text.addCaretListener((javax.swing.event.CaretEvent evt) -> {
-            seleccion = Text.getSelectedText();
             linesColumns(Text.getSelectionStart(), Text);
             texto = Text.getText();
+            seleccion = Text.getSelectedText();
         });
         Text.addHierarchyListener((java.awt.event.HierarchyEvent evt) -> {
             seleccion = Text.getSelectedText();
@@ -239,7 +239,21 @@ public class Principal extends javax.swing.JFrame {
             texto = Text.getText();
             title(Scroll);
             Scroll.setRowHeaderView(row);
+            
         });
+        
+        Text.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                seleccion = Text.getSelectedText();
+            }
+        });
+        
+        Text.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                seleccion = null;
+            }
+        });
+        
         return archivo;
     }
     
@@ -247,8 +261,7 @@ public class Principal extends javax.swing.JFrame {
         JFileChooser v = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Files", "html", "txt", "py", "java", "cpp");
         v.setFileFilter(filter);
-        v.showOpenDialog(this);
-        if(v.isFileSelectionEnabled()){
+        if(v.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
             Editor edit = new Editor();
             String text = edit.read(v.getSelectedFile().toString());
             newTab(v.getName(v.getSelectedFile()), v.getSelectedFile().toString(), text, v.getTypeDescription(v.getSelectedFile()), true);

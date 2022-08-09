@@ -21,9 +21,11 @@ public class File {
     private javax.swing.JTextArea sheet;
     private javax.swing.JScrollPane scroll;
     private boolean exist;
+    private Pila Undo;
+    private Pila Redo;
 
     //Functions
-    public File(String name, String directory, String text, String type, byte number, javax.swing.JTextArea sheet, javax.swing.JScrollPane scroll, boolean exist){
+    public File(String name, String directory, String text, String type, byte number, javax.swing.JTextArea sheet, javax.swing.JScrollPane scroll, boolean exist, Pila Undo, Pila Redo){
         this.name = name;
         this.directory = directory;
         this.text = text;
@@ -31,6 +33,8 @@ public class File {
         this.number = number;
         this.exist = exist;
         this.scroll = scroll;
+        this.Undo = Undo;
+        this.Redo = Redo;
     }
 
     File(String name) {
@@ -99,6 +103,22 @@ public class File {
 
     public void setScroll(JScrollPane scroll) {
         this.scroll = scroll;
+    }
+    
+    public Pila getUndo() {
+        return Undo;
+    }
+
+    public void setUndo(Pila Undo) {
+        this.Undo = Undo;
+    }
+
+    public Pila getRedo() {
+        return Redo;
+    }
+
+    public void setRedo(Pila Redo) {
+        this.Redo = Redo;
     }
 
 }
